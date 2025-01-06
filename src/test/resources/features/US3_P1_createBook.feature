@@ -1,6 +1,6 @@
 Feature: As a librarian, I want to create a new book using add_book endpoint so that I can add new books to the
   system.
- @wip
+ @wip @regression
   Scenario: Create a new book API
     Given I logged Library api as a "librarian"
     And Accept header is "application/json"
