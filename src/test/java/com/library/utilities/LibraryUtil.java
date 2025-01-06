@@ -1,5 +1,9 @@
 package com.library.utilities;
 
+import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
+import io.restassured.path.json.JsonPath;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,5 +32,30 @@ public class LibraryUtil {
         credentials.put("email", email);
         credentials.put("password", password);
         return credentials;
+    }
+    public static String getTokenByRole(String role) {
+
+        Map<String, String> credentials = retrieveCredentials(role);
+        String email = credentials.get("email");
+        String password = credentials.get("password");
+        return getToken(email, password);
+    }
+
+    public static String getToken(String email, String password) {
+
+
+        Map<String, String> credentials = new HashMap<>();
+        credentials.put("email", email);
+        credentials.put("password", password);
+        JsonPath jsonPath = RestAssured.given().accept(ContentType.JSON)
+                .contentType(ContentType.URLENC)
+                .formParams(credentials)
+                .when().post("/login")
+                .then()
+                .extract().jsonPath();
+
+        String token = jsonPath.getString("token");
+
+        return token;
     }
 }
