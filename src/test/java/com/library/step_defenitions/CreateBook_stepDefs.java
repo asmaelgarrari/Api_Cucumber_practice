@@ -12,19 +12,10 @@ import io.restassured.response.Response;
 import io.restassured.response.ValidatableResponse;
 import io.restassured.specification.RequestSpecification;
 import org.junit.Assert;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebElement;
-
-import java.awt.image.Kernel;
-import java.util.HashMap;
-import java.util.Map;
-
-import static com.library.utilities.RandomDataUtil.createRandomUser;
 
 import static org.junit.Assert.assertEquals;
 
-public class createBook_stepDefs {
+public class CreateBook_stepDefs {
 
     RequestSpecification givenPart = RestAssured.given().log().all();
     Response response;
