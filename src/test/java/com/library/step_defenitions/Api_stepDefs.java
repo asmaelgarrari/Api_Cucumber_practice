@@ -12,13 +12,18 @@ import io.restassured.response.ValidatableResponse;
 import io.restassured.specification.RequestSpecification;
 import org.junit.Assert;
 
+import java.util.List;
 import java.util.Objects;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class Api_stepDefs {
     RequestSpecification givenPart = RestAssured.given();
     ValidatableResponse thenPart;
     Response response;
     JsonPath jsonPath;
+    String expectedValue;
 
 
     LoginPage loginPage = new LoginPage();
@@ -71,6 +76,24 @@ public class Api_stepDefs {
         String actualValue = jsonPath.getString(path);
         Assert.assertNotNull(actualValue);
 
+    }
+
+    @Given("Path param is {string}")
+    public void path_param_is(String value) {
+        this.expectedValue = value;
+        givenPart.pathParam("id", value);
+    }
+    @Then("{string} field should be same with path param")
+    public void field_should_be_same_with_path_param(String path) {
+        String actualValue = jsonPath.getString(path);
+        assertEquals(expectedValue, actualValue);
+    }
+
+    @Then("following fields should not be null")
+    public void following_fields_should_not_be_null(List<String> fields) {
+        for (String eachField : fields) {
+            assertNotNull(jsonPath.getString(eachField));
+        }
     }
 
 }
