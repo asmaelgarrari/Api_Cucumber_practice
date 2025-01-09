@@ -2,6 +2,7 @@ package com.library.step_defenitions;
 
 import com.library.pages.LoginPage;
 import com.library.utilities.LibraryUtil;
+import com.library.utilities.RandomDataUtil;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -12,7 +13,9 @@ import io.restassured.response.ValidatableResponse;
 import io.restassured.specification.RequestSpecification;
 import org.junit.Assert;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import static org.junit.Assert.assertEquals;
@@ -24,6 +27,7 @@ public class Api_stepDefs {
     Response response;
     JsonPath jsonPath;
     String expectedValue;
+    Map<String, Object> randomDataMap = new HashMap<>();
 
 
     LoginPage loginPage = new LoginPage();
@@ -94,6 +98,47 @@ public class Api_stepDefs {
         for (String eachField : fields) {
             assertNotNull(jsonPath.getString(eachField));
         }
+    }
+
+    @Given("Request Content Type header is {string}")
+    public void request_content_type_header_is(String contentType) {
+
+        givenPart.header("Content-Type",contentType);
+
+    }
+    @Given("I create a random {string} as request body")
+    public void i_create_a_random_as_request_body(String dataType){
+
+        switch (dataType){
+            case "book":
+                randomDataMap = RandomDataUtil.createRandomBook();
+                break;
+
+            case "user":
+                randomDataMap = RandomDataUtil.createRandomUser();
+                break;
+
+            default:
+                throw new RuntimeException("Invalid Data type");
+
+        }
+        givenPart.formParams(randomDataMap);
+
+    }
+    @When("I send POST request to {string} endpoint")
+    public void i_send_post_request_to_endpoint(String endPoint) {
+
+        response =  givenPart.when().post(endPoint);
+        jsonPath= response.jsonPath();
+        thenPart= response.then();
+
+    }
+    @Then("the field value for {string} path should be equal to {string}")
+    public void the_field_value_for_path_should_be_equal_to(String path, String expectedText) {
+
+        String actualText = jsonPath.getString(path);
+        assertEquals(actualText,expectedText);
+        System.out.println("response Body"+response.getBody().asString());
     }
 
 }
